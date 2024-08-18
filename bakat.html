@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biling Admin - Bakat & Minat</title>
+    
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --text-color: #e8eaf6;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.8);
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: var(--secondary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem 0 rgba(0,0,0,0.25);
+        }
+        
+        .table {
+            color: var(--text-color);
+        }
+        
+        .status-cell {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .PROCESS {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .COMPLETE {
+            background-color: #28a745;
+            color: #fff;
+        }
+        /* Styling untuk modal */
+        .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #2c2c2c;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #2c2c2c;
+        }
+
+        .modal-title {
+            color: var(--text-color);
+        }
+
+        .btn-close {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Styling untuk tombol di dalam modal */
+        .modal .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .modal .btn-secondary {
+            background-color: #4a4a4a;
+            border-color: #4a4a4a;
+        }
+        
+        .trash-icon {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+        }
+        @media (max-width: 991.98px) {
+        #sidebar {
+            display: none;
+        }
+        .content {
+            margin-left: 0 !important;
+            padding-top: 56px; /* Height of the navbar */
+        }
+    }
+
+    @media (min-width: 992px) {
+        .navbar {
+            display: none;
+        }
+    }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class='bx bxs-dashboard'></i>
+                            <span class="ms-2">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bimbingan.html">
+                            <i class='bx bxs-food-menu'></i>
+                            <span class="ms-2">Bimbingan Konseling</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pengaduan.html">
+                            <i class='bx bxs-message-dots'></i>
+                            <span class="ms-2">Pengaduan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class='bx bxs-group'></i>
+                            <span class="ms-2">Bakat & Minat</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">
+                            <i class='bx bxs-universal-access'></i>
+                            <span class="ms-2">Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class='bx bxs-log-out-circle'></i>
+                            <span class="ms-2">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Navbar for mobile -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top d-lg-none">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">BilingPro Admin</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bimbingan.html"><i class="fas fa-comments"></i> Bimbingan Konseling</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pengaduan.html"><i class="fas fa-exclamation-circle"></i> Pengaduan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bakat.html"><i class="fas fa-chart-line"></i> Bakat & Minat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Bakat & Minat</h1>
+            </div>
+
+            <!-- Statistik Bakat & Minat -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Pengajuan</h5>
+                            <h2 class="card-text" id="totalPengajuan">50</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Dalam Proses</h5>
+                            <h2 class="card-text" id="dalamProses">20</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Selesai</h5>
+                            <h2 class="card-text" id="selesai">30</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Daftar Bakat & Minat</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>NIS</th>
+                                    <th>Minat Akademis</th>
+                                    <th>Hobi</th>
+                                    <th>Ekstrakurikuler</th>
+                                    <th>Minat Karir</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr onclick="showProfileModal('1234567890')">
+                                    <td>John Doe</td>
+                                    <td>1234567890</td>
+                                    <td>Sains</td>
+                                    <td>Membaca</td>
+                                    <td>Klub Sains</td>
+                                    <td>Peneliti</td>
+                                    <td><span class="status-cell PROCESS">PROCESS</span></td>
+                                    <td><i class='bx bx-trash trash-icon' onclick="deleteComplaint(1)"></i></td>
+                                </tr>
+                                <tr onclick="showProfileModal('0987654321')">
+                                    <td>Jane Smith</td>
+                                    <td>0987654321</td>
+                                    <td>Seni</td>
+                                    <td>Melukis</td>
+                                    <td>Klub Seni</td>
+                                    <td>Seniman</td>
+                                    <td><span class="status-cell COMPLETE">COMPLETE</span></td>
+                                    <td><i class='bx bx-trash trash-icon' onclick="deleteComplaint(2)"></i></td>
+                                </tr>
+                                <!-- Add more static rows as needed -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+           <!-- Grafik Bakat & Minat dan Catatan -->
+            <div class="row mb-4 mt-5">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Distribusi Minat Akademis</h5>
+                            <canvas id="minatChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Catatan dan Informasi</h5>
+                            <ul>
+                                <li>Sains: Fokus pada mata pelajaran IPA dan Matematika</li>
+                                <li>Teknologi: Minat tinggi pada komputer dan robotika</li>
+                                <li>Seni: Meliputi seni rupa, musik, dan tari</li>
+                                <li>Olahraga: Termasuk berbagai cabang olahraga</li>
+                                <li>Lainnya: Minat di bidang sosial, bahasa, dll.</li>
+                            </ul>
+                            <p>Data ini diperbarui setiap bulan berdasarkan survei siswa.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          
+
+           <!-- Profile Modal -->
+            <div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Profil Siswa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Nama:</strong> <span class="modal-nama"></span></p>
+                            <p><strong>NIS:</strong> <span class="modal-nis"></span></p>
+                            <p><strong>Email:</strong> <span class="modal-email"></span></p>
+                            <p><strong>Sekolah:</strong> <span class="modal-sekolah"></span></p>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-primary whatsapp-link" href="#" target="_blank">Hubungi via WhatsApp</a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+     function adjustContentPadding() {
+        if (window.innerWidth < 992) {
+            document.querySelector('.content').style.paddingTop = document.querySelector('.navbar').offsetHeight + 'px';
+        } else {
+            document.querySelector('.content').style.paddingTop = '0';
+        }
+    }
+
+    window.addEventListener('load', adjustContentPadding);
+    window.addEventListener('resize', adjustContentPadding);
+
+    function showProfileModal(nis) {
+        // Simulated data for demonstration
+        const data = {
+            nama: nis === '1234567890' ? 'John Doe' : 'Jane Smith',
+            nis: nis,
+            email: nis === '1234567890' ? 'johndoe@example.com' : 'janesmith@example.com',
+            sekolah: 'SMA Negeri 1',
+            telepon: '081234567890'
+        };
+
+        const modal = new bootstrap.Modal(document.getElementById('profileModal'));
+        document.querySelector('.modal-nama').textContent = data.nama;
+        document.querySelector('.modal-nis').textContent = data.nis;
+        document.querySelector('.modal-email').textContent = data.email;
+        document.querySelector('.modal-sekolah').textContent = data.sekolah;
+        const fullPhoneNumber = '62' + data.telepon.replace(/^0+/, '');
+        const message = "Permintaan Anda untuk bimbingan telah kami terima, silahkan tunggu informasi berikutnya.-admin";
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappLink = document.querySelector('.whatsapp-link');
+        whatsappLink.href = `https://wa.me/${fullPhoneNumber}?text=${encodedMessage}`;
+        modal.show();
+
+        whatsappLink.onclick = function() {
+            alert('Status telah diupdate ke COMPLETE.');
+            location.reload();
+        };
+    }
+
+    function deleteComplaint(id) {
+        if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+            alert('Data berhasil dihapus.');
+            location.reload();
+        }
+    }
+
+    // Inisialisasi grafik
+    var ctx = document.getElementById('minatChart').getContext('2d');
+    var minatChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Sains', 'Teknologi', 'Seni', 'Olahraga', 'Lainnya'],
+            datasets: [{
+                data: [30, 25, 20, 15, 10],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biling Admin - Pengaduan</title>
+    
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3949ab;
+            --text-color: #e8eaf6;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.8);
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: var(--secondary-color);
+        }
+        /* Styling untuk modal */
+        .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #2c2c2c;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #2c2c2c;
+        }
+
+        .modal-title {
+            color: var(--text-color);
+        }
+
+        .btn-close {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Styling untuk tombol di dalam modal */
+        .modal .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .modal .btn-secondary {
+            background-color: #4a4a4a;
+            border-color: #4a4a4a;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem 0 rgba(0,0,0,0.25);
+        }
+        
+        .table {
+            color: var(--text-color);
+        }
+        
+        .status-cell {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .PROCESS {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .COMPLETE {
+            background-color: #28a745;
+            color: #fff;
+        }
+        
+        .trash-icon {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+        }
+        
+        #profileModal {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 15px;
+        }
+        @media (max-width: 991.98px) {
+        #sidebar {
+            display: none;
+        }
+        .content {
+            margin-left: 0 !important;
+            padding-top: 56px; /* Height of the navbar */
+        }
+    }
+
+    @media (min-width: 992px) {
+        .navbar {
+            display: none;
+        }
+    }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class='bx bxs-dashboard'></i>
+                            <span class="ms-2">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bimbingan.html">
+                            <i class='bx bxs-food-menu'></i>
+                            <span class="ms-2">Bimbingan Konseling</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class='bx bxs-message-dots'></i>
+                            <span class="ms-2">Pengaduan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bakat.html">
+                            <i class='bx bxs-group'></i>
+                            <span class="ms-2">Bakat & Minat</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html">
+                            <i class='bx bxs-universal-access'></i>
+                            <span class="ms-2">Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class='bx bxs-log-out-circle'></i>
+                            <span class="ms-2">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Navbar for mobile -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top d-lg-none">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">BilingPro Admin</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bimbingan.html"><i class="fas fa-comments"></i> Bimbingan Konseling</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="pengaduan.html"><i class="fas fa-exclamation-circle"></i> Pengaduan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bakat.html"><i class="fas fa-chart-line"></i> Bakat & Minat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Pengaduan</h1>
+            </div>
+
+            <!-- Statistik Pengaduan -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Pengaduan</h5>
+                            <h2 class="card-text" id="totalPengaduan">25</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Pengaduan Diproses</h5>
+                            <h2 class="card-text" id="pengaduanProses">10</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Pengaduan Selesai</h5>
+                            <h2 class="card-text" id="pengaduanSelesai">15</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Pengaduan -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Daftar Pengaduan</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Klarifikasi</th>
+                                    <th>Nama</th>
+                                    <th>NIS</th>
+                                    <th>Judul</th>
+                                    <th>Laporan</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr onclick="showProfileModal('1234567890')">
+                                    <td>Akademik</td>
+                                    <td>John Doe</td>
+                                    <td>1234567890</td>
+                                    <td>Masalah Nilai</td>
+                                    <td>Nilai saya tidak sesuai dengan yang seharusnya</td>
+                                    <td><span class="status-cell PROCESS">PROCESS</span></td>
+                                    <td><i class='bx bx-trash trash-icon' onclick="deleteComplaint(1)"></i></td>
+                                </tr>
+                                <tr onclick="showProfileModal('0987654321')">
+                                    <td>Fasilitas</td>
+                                    <td>Jane Smith</td>
+                                    <td>0987654321</td>
+                                    <td>Kerusakan AC</td>
+                                    <td>AC di kelas tidak berfungsi dengan baik</td>
+                                    <td><span class="status-cell COMPLETE">COMPLETE</span></td>
+                                    <td><i class='bx bx-trash trash-icon' onclick="deleteComplaint(2)"></i></td>
+                                </tr>
+                                <!-- Add more static rows as needed -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grafik Pengaduan -->
+            <div class="card mb-4 mt-5">
+                <div class="card-body">
+                    <h5 class="card-title">Tren Pengaduan</h5>
+                    <canvas id="pengaduanChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Modal Profil -->
+            <div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Profil Siswa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Nama:</strong> <span class="modal-nama"></span></p>
+                            <p><strong>NIS:</strong> <span class="modal-nis"></span></p>
+                            <p><strong>Email:</strong> <span class="modal-email"></span></p>
+                            <p><strong>Sekolah:</strong> <span class="modal-sekolah"></span></p>
+                            <a class="btn btn-success whatsapp-link" href="#" target="_blank">Hubungi via WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function adjustContentPadding() {
+    if (window.innerWidth < 992) {
+        document.querySelector('.content').style.paddingTop = document.querySelector('.navbar').offsetHeight + 'px';
+    } else {
+        document.querySelector('.content').style.paddingTop = '0';
+    }
+}
+
+    window.addEventListener('load', adjustContentPadding);
+    window.addEventListener('resize', adjustContentPadding);
+    // Fungsi untuk menampilkan modal profil
+    
+    var ctx = document.getElementById('pengaduanChart').getContext('2d');
+    var pengaduanChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Jumlah Pengaduan',
+                data: [12, 19, 3, 5, 2, 3],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Simulated data for demonstration
+    function showProfileModal(nis) {
+        const data = {
+            nama: nis === '1234567890' ? 'John Doe' : 'Jane Smith',
+            nis: nis,
+            email: nis === '1234567890' ? 'johndoe@example.com' : 'janesmith@example.com',
+            sekolah: 'SMA Negeri 1',
+            telepon: '081234567890'
+        };
+
+        const modal = new bootstrap.Modal(document.getElementById('profileModal'));
+        document.querySelector('.modal-nama').textContent = data.nama;
+        document.querySelector('.modal-nis').textContent = data.nis;
+        document.querySelector('.modal-email').textContent = data.email;
+        document.querySelector('.modal-sekolah').textContent = data.sekolah;
+        const fullPhoneNumber = '62' + data.telepon.replace(/^0+/, '');
+        const message = "Permintaan Anda untuk bimbingan telah kami terima, silahkan tunggu informasi berikutnya.-admin";
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappLink = document.querySelector('.whatsapp-link');
+        whatsappLink.href = `https://wa.me/${fullPhoneNumber}?text=${encodedMessage}`;
+        modal.show();
+
+        whatsappLink.onclick = function() {
+            alert('Status telah diupdate ke COMPLETE.');
+            location.reload();
+        };
+    }
+
+    function deleteComplaint(id) {
+        if (confirm("Apakah Anda yakin ingin menghapus pengaduan ini?")) {
+            alert('Pengaduan berhasil dihapus.');
+            location.reload();
+        }
+    }
+    
+    </script>
+
+</body>
+</html>
